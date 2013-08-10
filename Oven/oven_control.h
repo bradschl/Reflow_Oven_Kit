@@ -11,7 +11,7 @@
 #include "stdint.h"
 
 void get_reflow_time_string(char * buffer);
-void run_oven_state_machine();
+void stepOvenStateMachine();
 void stop_oven();
 uint8_t start_oven();
 

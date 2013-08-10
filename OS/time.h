@@ -8,7 +8,7 @@
 #ifndef TIME_H_
 #define TIME_H_
 
-#include "stdint.h"
+#include <stdint.h>
 
 typedef struct {
 	uint8_t secs;

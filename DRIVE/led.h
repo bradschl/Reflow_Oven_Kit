@@ -9,7 +9,7 @@
 #define LED_H_
 
 
-void led_state_machine();
+void stepLEDStateMachined();
 void reset_idle_timer();
 
 #endif /* LED_H_ */

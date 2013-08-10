@@ -652,7 +652,7 @@ void print_oven_data()
 
 }
 
-void Page_Event_Handler()
+void stepPageStateMachine()
 {
 	Pages Page_Return;
 	switch( Current_Page)

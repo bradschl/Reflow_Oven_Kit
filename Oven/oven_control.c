@@ -140,7 +140,7 @@ void stop_oven()
 	OVEN_OFF;
 }
 
-void run_oven_state_machine()
+void stepOvenStateMachine()
 {
 	uint16_t oven_temp =0;
 	oven_temp= get_temp();

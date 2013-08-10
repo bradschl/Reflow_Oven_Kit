@@ -6,94 +6,126 @@
  */
 
 
-#include "msp430g2553.h"
-#include "rtc.h"
-#include "timer.h"
+#include <msp430g2553.h>
+#include "System.h"
+#include "DRIVE/rtc.h"
+#include "DRIVE/timer.h"
 
-//static int gseq = 33;
-//static int rseq = 0;
-//static int bseq = 66;
 
-uint16_t counts=0;
+/******************************************************************************
+ * Defines
+******************************************************************************/
+#ifndef SYSTEM_TIME_12H
+	#define SYSTEM_TIME_24H
+	#define HOUR_LIMIT 24
+#else
+	#define HOUR_LIMIT 12
+#endif
+
+#ifndef CPU_FREQUENCY_HZ
+	#error "CPU frequency is not defined!"
+#endif
+
+#define WDT_TIMER_PERIOD_US 	(512*1000000)/CPU_FREQUENCY_HZ
+
+
+/******************************************************************************
+ * Static Variables
+******************************************************************************/
+static uint16_t cpuTick_ms = 0;
 static time_stamp system_time={0,0,0};
 
-uint16_t reflow_timer=0;
-uint8_t task_flags=0;
 
-void rtc_setup()
+/******************************************************************************
+ * Functions
+******************************************************************************/
+static void incrementSystemTime_FromISR(uint16_t period_us);
+static void incrementTaskTick_FromISR(uint16_t period_us);
+
+void setupRTC()
 {
-	WDTCTL = WDT_MDLY_0_5;	// WDT 0.015625ms or 64 Hz
+	WDTCTL = WDT_MDLY_0_5;	// Interval timer, SMCLK / 512 --> 32us
 	IE1 |= WDTIE;         	// Enable WDT interrupt
-	__enable_interrupt();
-}
-
-void check_scheduler()
-{
-	static uint16_t counts_prev=0;
-
-	if(counts_prev != counts)
-	{
-		if(task_500ms)
-			task_flags |=task_500ms_flag;
-
-		if(task_250ms)
-			task_flags |=task_250ms_flag;
-
-		if(task_125ms)
-			task_flags |=task_125ms_flag;
-
-		if(task_62ms)
-		{
-			task_flags |=task_62ms_flag;
-		}
-
-		if(task_32ms)
-		{
-			task_flags |=task_32ms_flag;
-		}
-
-		if(task_15ms)
-			task_flags |=task_15ms_flag;
-
-		if(task_graph_ud)
-			task_flags |=graph_update;
-	}
-
-	counts_prev = counts;
-
-
 }
 
 
-// Watchdog Timer interrupt service routine
+/**
+ * Watchdog timer ISR
+ */
 #pragma vector=WDT_VECTOR
 __interrupt void watchdog_timer(void)
 {
-	counts++; // Interrupts every 1/64s
 
-	reflow_timer++;
-	if(counts>31250)
+	incrementSystemTime_FromISR(WDT_TIMER_PERIOD_US);
+	incrementTaskTick_FromISR(WDT_TIMER_PERIOD_US);
+
+}
+
+/**
+ * Increments the system time.
+ *
+ * @param period_us Time (in us) to increment system time
+ */
+static void incrementSystemTime_FromISR(uint16_t period_us)
+{
+	static uint32_t cpuTime_us = 0;
+
+	cpuTime_us += period_us;
+
+	if(cpuTime_us > 1000000)
 	{
-		counts=0;
+		cpuTime_us -= 1000000;
 		system_time.secs++;
-		if(system_time.secs>59)
+		if(system_time.secs > 59)
+		{
+			system_time.secs = 0;
+			system_time.minutes++;
+			if(system_time.minutes > 59)
 			{
-				system_time.minutes++;
-				system_time.secs=0;
-			}
-			if(system_time.minutes>59)
-			{
+				system_time.minutes = 0;
 				system_time.hours++;
-				system_time.hours %=12;
-				system_time.minutes=0;
+				while(system_time.hours > HOUR_LIMIT)
+				{
+					system_time.hours -= HOUR_LIMIT;
+				}
 			}
+		}
 	}
+}
 
-	if((counts % 500)==0)
+/**
+ * Increments the system task tick counter.
+ */
+static void incrementTaskTick_FromISR(uint16_t period_us)
+{
+	static uint16_t cpuTime_us = 0;
+
+	cpuTime_us += period_us;
+
+	if(cpuTime_us > 1000)
 	{
-		check_scheduler();
+		// 1ms has passed
+		cpuTime_us -= 1000;
+		cpuTick_ms++;
+		if(cpuTick_ms >= MAX_CPU_TICK_TIME_MS)
+		{
+			cpuTick_ms -= MAX_CPU_TICK_TIME_MS;
+		}
 	}
 
+}
+
+/**
+ * Gets the millisecond task tick. Note that this number rolls over at 5000ms
+ */
+uint16_t getTaskTick_ms(void)
+{
+	return cpuTick_ms;
+}
+
+const time_stamp* getSystemTime(void)
+{
+	return &system_time;
 }
 
 uint8_t get_system_seconds()

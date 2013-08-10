@@ -8,7 +8,7 @@
 #ifndef OS_H_
 #define OS_H_
 
-void Start_OS();
+void runScheduler_noRet();
 
 #endif /* OS_H_ */
 

@@ -39,7 +39,7 @@ typedef enum
 
 } Pages;
 
-void Page_Event_Handler();
+void stepPageStateMachine();
 void update_graph();
 void print_oven_data();
 void check_timeout();

@@ -26,7 +26,7 @@ void reset_idle_timer()
 }
 
 
-void led_state_machine()
+void stepLEDStateMachined()
 {
 	uint16_t xval =0;
 	uint16_t yval =0;

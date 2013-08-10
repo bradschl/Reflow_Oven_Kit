@@ -19,15 +19,19 @@ int main(void)
 	WDTCTL = WDTPW + WDTHOLD; // disable WDT
 	BCSCTL1 = CALBC1_16MHZ; // 16MHz clock
 	DCOCTL = CALDCO_16MHZ;
+
 	init_cal();
 	Setup_PWM_Timers();
 	TOUCH_SETUP();
-	rtc_setup();
+	setupRTC();
 	Setup_LCD();
 	reset_idle_timer();
 	OVEN_SETUP;
 	OVEN_OFF;
-	Start_OS();
+
+	__enable_interrupt();
+
+	runScheduler_noRet();
 
 //	while(1);
 

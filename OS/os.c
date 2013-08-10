@@ -18,77 +18,83 @@
 #include "../OVEN/oven_control.h"
 #include "../DRIVE/led.h"
 
-// System count time
+#define TICK_BIT_16MS 4
+#define TICK_BIT_32MS 5
+#define TICK_BIT_64MS 6
+#define TICK_BIT_256MS 8
+#define TICK_BIT_512MS 9
 
-// 1  count  =  15.6ms
-// 2  counts =  31.6ms
-// 4  counts =  62.5ms
-// 8  counts = 125.0ms
-// 16 counts = 250.0ms
-// 32 counts = 500.0ms
+uint16_t bit_modulous(uint16_t num, uint16_t bit);
 
-void run_tasks()
+void run_tasks(uint16_t tick_ms)
 {
-	if(task_flags & task_15ms_flag)
+	if((bit_modulous(tick_ms, TICK_BIT_16MS) == 0) && (tick_ms >=16))
 	{
-
-		Page_Event_Handler();
-		led_state_machine();
-		run_oven_state_machine();
-		task_flags &=~task_15ms_flag;
-
+		stepPageStateMachine();
+		stepLEDStateMachined();
+		stepOvenStateMachine();
 	}
 
-	if(task_flags & task_32ms_flag)
+	if((bit_modulous(tick_ms, TICK_BIT_32MS) == 0) && (tick_ms >=32))
 	{
-		task_flags &=~task_32ms_flag;
 		update_temp();
-
 	}
 
-	if(task_flags & task_62ms_flag)
+	if((bit_modulous(tick_ms, TICK_BIT_64MS) == 0) && (tick_ms >=64))
 	{
 		if(Get_LED_Timer_Status())
 		{
 			GLED_Sequence();
 			RLED_Sequence();
 			BLED_Sequence();
-			task_flags &=~task_62ms_flag;
 		}
 
 	}
 
 
-	if(task_flags & task_250ms_flag)
+	if((bit_modulous(tick_ms, TICK_BIT_256MS) == 0) && (tick_ms >=256))
 	{
 
-		task_flags &=~task_250ms_flag;
 	}
 
-	if(task_flags & task_500ms_flag)
+	if((bit_modulous(tick_ms, TICK_BIT_512MS) == 0) && (tick_ms >=512))
 	{
+
 		setColor16(COLOR_16_WHITE);
 		get_system_time_string(text_buffer);
 		drawString(10,160,text_buffer);
 		print_oven_data();
-		if(task_flags & graph_update)
+
+		// TODO: Fix graph to be period agnostic
+		/*if(task_flags & graph_update)
 		{
 			update_graph();
 			task_flags &= ~graph_update;
-		}
+		}*/
 
-		task_flags &=~task_500ms_flag;
 		//RLED_OUT ^= RLED;
 	}
 
 }
 
-void Start_OS()
+void runScheduler_noRet()
 {
+	uint16_t lastTick_ms = 0;
+	uint16_t newTick_ms = 0;
+
 	while(1)
 	{
-		run_tasks();
+		newTick_ms = getTaskTick_ms();
+		if(newTick_ms != lastTick_ms)
+		{
+			lastTick_ms = newTick_ms;
+			run_tasks(newTick_ms);
+		}
 	}
-
 }
 
+
+uint16_t bit_modulous(uint16_t num, uint16_t bit)
+{
+	return (~(0xFFFF << bit)) & num;
+}
