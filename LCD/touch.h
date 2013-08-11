@@ -22,10 +22,14 @@
 #define GET_X		0xD0
 #define GET_Y		0x90
 
+
+typedef uint16_t touch_t;
+
 void TOUCH_SETUP();
 uint16_t TOUCH_X();
 uint16_t TOUCH_Y();
 void TOUCH_VAL(uint16_t * xval, uint16_t * yval);
 
+void updateTouchValue(void);
 
 #endif /* TOUCH_H_ */

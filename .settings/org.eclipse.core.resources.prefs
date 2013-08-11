@@ -1,7 +1,9 @@
-#Wed Jun 12 21:07:18 CDT 2013
+#Sat Aug 10 20:15:05 CDT 2013
 eclipse.preferences.version=1
 encoding//Debug/DRIVE/subdir_rules.mk=UTF-8
 encoding//Debug/DRIVE/subdir_vars.mk=UTF-8
+encoding//Debug/GUI/subdir_rules.mk=UTF-8
+encoding//Debug/GUI/subdir_vars.mk=UTF-8
 encoding//Debug/LCD/subdir_rules.mk=UTF-8
 encoding//Debug/LCD/subdir_vars.mk=UTF-8
 encoding//Debug/OS/subdir_rules.mk=UTF-8

@@ -3,6 +3,8 @@
 #include "touch.h"
 #include "../DRIVE/spi.h"
 
+static uint16_t scTouchX = 0;
+static uint16_t scTouchY = 0;
 
 void TOUCH_SETUP()
 {
@@ -37,52 +39,54 @@ uint16_t TOUCH_Y()
 	return yval;
 }
 
+void updateTouchValue(void)
+{
+    uint16_t xvals =0;
+    uint16_t yvals =0;
+
+    SLOW_SPI; // Down Clock
+
+    TOUCH_CS_PORT &=~(TOUCH_CS);
+    _delay_cycles(1000);
+    yvals = TOUCH_Y();
+    _delay_cycles(1000);
+    xvals = TOUCH_X();
+
+    TOUCH_CS_PORT |=(TOUCH_CS);
+
+    if(!((xvals <500) || (yvals >4000)))
+    {
+        if(xvals>500)
+            xvals -=500;
+        else
+            xvals=0;
+        xvals /=17;
+        if(yvals>400)
+            yvals-=400;
+        else
+            yvals=0;
+        yvals /=14;
+
+        //*xval = yvals;
+        //*yval = 176 - xvals;
+
+        scTouchX = 220-yvals;
+        scTouchY = xvals;
+
+    }
+    else
+    {
+        scTouchX = 0;
+        scTouchY = 0;
+    }
+
+
+    FAST_SPI; //Max
+}
 void TOUCH_VAL(uint16_t * xval, uint16_t * yval)
 {
-
-	uint16_t xvals =0;
-	uint16_t yvals =0;
-
-	SLOW_SPI; // Down Clock
-
-	TOUCH_CS_PORT &=~(TOUCH_CS);
-	_delay_cycles(1000);
-	yvals = TOUCH_Y();
-	_delay_cycles(1000);
-	xvals = TOUCH_X();
-
-	TOUCH_CS_PORT |=(TOUCH_CS);
-
-
-	if(!((xvals <500) || (yvals >4000)))
-	{
-		if(xvals>500)
-			xvals -=500;
-		else
-			xvals=0;
-		xvals /=17;
-		if(yvals>400)
-			yvals-=400;
-		else
-			yvals=0;
-		yvals /=14;
-
-		//*xval = yvals;
-		//*yval = 176 - xvals;
-
-		*xval = 220-yvals;
-		*yval = xvals;
-
-	}
-	else
-	{
-		*xval = 0;
-		*yval = 0;
-	}
-
-
-	FAST_SPI; //Max
-
+    *xval = scTouchX;
+    *yval = scTouchY;
 }
 
 

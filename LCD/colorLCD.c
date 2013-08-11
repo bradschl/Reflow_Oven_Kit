@@ -305,7 +305,7 @@ void drawChar8_12(uint8_t x, uint8_t y, char c) {
 
 }
 
-void drawString8_12(uint8_t x, uint8_t y, char *string) {
+void drawString8_12(uint8_t x, uint8_t y, const char *string) {
 	uint8_t xs = x;
 	while (*string) {
 		drawChar8_12(xs, y, *string++);

@@ -156,7 +156,7 @@ void drawString(uint8_t x, uint8_t y, char *string);
 void drawChar11_16(uint8_t x, uint8_t y, char c);
 void drawString11_16(uint8_t x, uint8_t y, char *string);
 void drawChar8_12(uint8_t x, uint8_t y, char c);
-void drawString8_12(uint8_t x, uint8_t y, char *string);
+void drawString8_12(uint8_t x, uint8_t y, const char *string);
 void drawLine(uint8_t xStart, uint8_t yStart, uint8_t xEnd, uint8_t yEnd);
 void drawRect(uint8_t xStart, uint8_t yStart, uint8_t xEnd, uint8_t yEnd);
 void drawCircle(uint8_t x, uint8_t y, uint8_t radius);

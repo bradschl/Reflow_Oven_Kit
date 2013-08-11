@@ -6,11 +6,9 @@
  */
 
 
-#include <msp430g2553.h>
 #include "System.h"
 #include "DRIVE/rtc.h"
 #include "DRIVE/timer.h"
-
 
 /******************************************************************************
  * Defines
@@ -116,7 +114,7 @@ static void incrementTaskTick_FromISR(uint16_t period_us)
 }
 
 /**
- * Gets the millisecond task tick. Note that this number rolls over at 5000ms
+ * Gets the millisecond task tick. Note that this number rolls over at MAX_CPU_TICK_TIME_MS
  */
 uint16_t getTaskTick_ms(void)
 {

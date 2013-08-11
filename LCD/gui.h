@@ -27,7 +27,7 @@ typedef struct
 } Small_Text_Button;
 
 
-void Setup_LCD();
+void setupReflowGUI();
 
 typedef enum
 {
