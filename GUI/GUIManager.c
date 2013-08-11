@@ -86,6 +86,8 @@ void clearAllGUIElements(void)
     {
         scCustomElements[i].pCustomElement = NULL;
     }
+
+    fClearScreen = true;
 }
 
 void stepGUIManagerTask(void)
@@ -159,19 +161,6 @@ void stepGUIManagerTask(void)
     redrawMarkedElements();
 }
 
-static bool isInRegion( touch_t xTouch, touch_t yTouch, pixel_t xStart,
-                        pixel_t yStart, pixel_t xSize, pixel_t ySize)
-{
-    if((xTouch >= (xStart - TOUCH_TOLERANCE) && (xTouch <= (xStart + xSize + TOUCH_TOLERANCE))))
-    {
-        if((yTouch >= (yStart - TOUCH_TOLERANCE) && (yTouch <= (yStart + ySize + TOUCH_TOLERANCE))))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
 
 void publishGUIEvents(void)
 {
@@ -200,24 +189,6 @@ void publishGUIEvents(void)
 
 }
 
-static void queueEvent(GUIEvent_E event, GUIAction_E action)
-{
-    uint8_t i = 0;
-
-    while(i < GUI_EVENT_QUEUE_SIZE)
-    {
-        if(scEventQueue[i].event == EVENT_NoEvent)
-        {
-            // Free spot, use it;
-            scEventQueue[i].event = event;
-            scEventQueue[i].action = action;
-            break;
-        }
-
-        i++;
-    }
-
-}
 
 void addGUIButtionElement(TextButton_S* textButton)
 {
@@ -240,6 +211,127 @@ void addGUIButtionElement(TextButton_S* textButton)
         i++;
     }
 }
+
+
+void removeGUITextButton(TextButton_S* pTextButton)
+{
+    uint8_t i;
+    pixel_t xEnd;
+    pixel_t yEnd;
+
+    if(pTextButton == NULL)
+    {
+        return;
+    }
+
+    i = 0;
+    while(i < GUI_MAX_TEXT_BUTTONS)
+    {
+        if(scTextButtonElements[i].pTextButton == pTextButton)
+        {
+            // Remove from list
+            scTextButtonElements[i].pTextButton = NULL;
+
+            // Overwrite on display
+            xEnd = (pTextButton->xStart) + (pTextButton->xSize);
+            yEnd = (pTextButton->yStart) + (pTextButton->ySize);
+            setColor16(COLOR_16_BLACK);
+            fillRect(pTextButton->xStart, pTextButton->yStart, xEnd, yEnd);
+
+            break;
+        }
+
+        i++;
+    }
+}
+
+
+void removeGUICustomElement(CustomElement_S* pCustonElement)
+{
+    uint8_t i;
+    pixel_t xEnd;
+    pixel_t yEnd;
+
+    if(pCustonElement == NULL)
+    {
+        return;
+    }
+
+    i = 0;
+    while(i < GUI_MAX_CUSTOM_ELEMENTS)
+    {
+        if(scCustomElements[i].pCustomElement == pCustonElement)
+        {
+            // Remove from list
+            scCustomElements[i].pCustomElement = NULL;
+
+            // Overwrite on display
+            xEnd = pCustonElement->xStart + pCustonElement->xSize;
+            yEnd = pCustonElement->yStart + pCustonElement->ySize;
+            setColor16(COLOR_16_BLACK);
+            fillRect(pCustonElement->xStart, pCustonElement->yStart, xEnd, yEnd);
+        }
+
+        i++;
+    }
+}
+
+
+void addGUICustomElement(CustomElement_S* pCustomElement)
+{
+    uint8_t i;
+
+    i = 0;
+    while(i < GUI_MAX_CUSTOM_ELEMENTS)
+    {
+        if(scCustomElements[i].pCustomElement == NULL)
+        {
+            // Found an empty spot
+            scCustomElements[i].pCustomElement = pCustomElement;
+            scCustomElements[i].fRedraw = true;
+            scCustomElements[i].fTouchActive = false;
+            break;
+        }
+
+        i++;
+    }
+}
+
+
+static bool isInRegion( touch_t xTouch, touch_t yTouch, pixel_t xStart,
+                        pixel_t yStart, pixel_t xSize, pixel_t ySize)
+{
+    if((xTouch >= (xStart - TOUCH_TOLERANCE) && (xTouch <= (xStart + xSize + TOUCH_TOLERANCE))))
+    {
+        if((yTouch >= (yStart - TOUCH_TOLERANCE) && (yTouch <= (yStart + ySize + TOUCH_TOLERANCE))))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+static void queueEvent(GUIEvent_E event, GUIAction_E action)
+{
+    uint8_t i = 0;
+
+    while(i < GUI_EVENT_QUEUE_SIZE)
+    {
+        if(scEventQueue[i].event == EVENT_NoEvent)
+        {
+            // Free spot, use it;
+            scEventQueue[i].event = event;
+            scEventQueue[i].action = action;
+            break;
+        }
+
+        i++;
+    }
+
+}
+
 
 static void redrawMarkedElements(void)
 {
@@ -290,9 +382,9 @@ static void redrawMarkedElements(void)
 
 }
 
+
 static void drawTextButton(TextButton_S* pTextButton)
 {
-    // TODO: stub function
     uint16_t bg_color = COLOR_16_RED;
     pixel_t xEnd = (pTextButton->xStart) + (pTextButton->xSize);
     pixel_t yEnd = (pTextButton->yStart) + (pTextButton->ySize);
@@ -304,6 +396,10 @@ static void drawTextButton(TextButton_S* pTextButton)
     setBackgroundColor16(bg_color);
     setColor16(COLOR_16_WHITE);
     drawString8_12(pTextButton->xStart+5, pTextButton->yStart + 5, pTextButton->pText );
-    //setBackgroundColor16(COLOR_16_BLACK);
 }
+
+
+
+
+
 

@@ -61,6 +61,7 @@ void run_tasks(uint16_t tick_ms)
 	{
 	    stepReflowGUI();
 
+	    setBackgroundColor16(COLOR_16_BLACK);
 		setColor16(COLOR_16_WHITE);
 		get_system_time_string(text_buffer);
 		drawString(10,160,text_buffer);

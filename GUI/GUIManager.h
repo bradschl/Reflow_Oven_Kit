@@ -35,6 +35,7 @@
  */
 #define GUI_MAX_OBSERVERS 3
 
+
 /******************************************************************************
  * Global Variables
 ******************************************************************************/
@@ -48,7 +49,16 @@ void stepGUIManagerTask(void);
 void publishGUIEvents(void);
 
 void clearAllGUIElements(void);
+
 void addGUIButtionElement(TextButton_S* textButton);
+void removeGUITextButton(TextButton_S* pTextButton);
+
+void addGUICustomElement(CustomElement_S* pCustomElement);
+void removeGUICustomElement(CustomElement_S* pCustonElement);
+
 
 
 #endif /* GUIMANAGER_H_ */
+
+
+
