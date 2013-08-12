@@ -44,26 +44,26 @@ typedef enum
 
 // Multi-page
 static void multi_PageTitleHandler(GUIEvent_E event, GUIAction_E action);
-static CustomElement_S multi_PageTitle = {EVENT_MultiPageTitle, 0, 0, 219, 30, multi_PageTitleHandler};
-static TextButton_S multi_BackButton = {EVENT_MultiBackButton, 70, 150, 42, 20, "Back"};
+static const CustomElement_S multi_PageTitle = {EVENT_MultiPageTitle, 0, 0, 219, 30, multi_PageTitleHandler};
+static const TextButton_S multi_BackButton = {EVENT_MultiBackButton, 70, 150, 42, 20, "Back"};
 
 // Home Page
 static void home_CustomElementsHandler(GUIEvent_E event, GUIAction_E action);
-static CustomElement_S home_CustomElements = {EVENT_HomeCustomElements, 0, 0, 0, 0, home_CustomElementsHandler};
-static TextButton_S home_LeadedButton = {EVENT_HomeLeadedButton, 10, 60,
+static const CustomElement_S home_CustomElements = {EVENT_HomeCustomElements, 0, 0, 0, 0, home_CustomElementsHandler};
+static const TextButton_S home_LeadedButton = {EVENT_HomeLeadedButton, 10, 60,
                                          LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Leaded"};
-static TextButton_S home_LeadFreeButton = {EVENT_HomeLeadFreeButton, 110, 60,
+static const TextButton_S home_LeadFreeButton = {EVENT_HomeLeadFreeButton, 110, 60,
                                            LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Pb-Free"};
-static TextButton_S home_TempCalButton = {EVENT_HomeTempCalButton, 140, 150,
+static const TextButton_S home_TempCalButton = {EVENT_HomeTempCalButton, 140, 150,
                                            LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Temp Cal"};
 
 // Reflow Page
 static void reflow_CustomElementsHandler(GUIEvent_E event, GUIAction_E action);
 static void reflow_GraphElementHandler(GUIEvent_E event, GUIAction_E action);
 static void reflow_OvenStatusHandler(GUIEvent_E event, GUIAction_E action);
-static CustomElement_S reflow_CustomElements = {EVENT_ReflowCustomElements, 0, 0, 0, 0, reflow_CustomElementsHandler};
-static CustomElement_S reflow_GraphElement = {EVENT_ReflowGraphElement, 0, 0, 0, 0, reflow_GraphElementHandler};
-static CustomElement_S reflow_OvenStatus = {EVENT_ReflowOvenStatusElement, 0, 0, 0, 0, reflow_OvenStatusHandler};
+static const CustomElement_S reflow_CustomElements = {EVENT_ReflowCustomElements, 0, 0, 0, 0, reflow_CustomElementsHandler};
+static const CustomElement_S reflow_GraphElement = {EVENT_ReflowGraphElement, 0, 0, 0, 0, reflow_GraphElementHandler};
+static const CustomElement_S reflow_OvenStatus = {EVENT_ReflowOvenStatusElement, 0, 0, 0, 0, reflow_OvenStatusHandler};
 static const char* reflow_StartText = "Start";
 static const char* reflow_StopText = "EStop";
 static TextButton_S reflow_StartStopButton = {EVENT_ReflowStartStopButton, 160, 150, 50, 20, ""};
@@ -72,11 +72,11 @@ static TextButton_S reflow_StartStopButton = {EVENT_ReflowStartStopButton, 160, 
 // Calibration Page
 static void tempCal_CustomElementsHandler(GUIEvent_E event, GUIAction_E action);
 static void tempCal_TempDisplayHandler(GUIEvent_E event, GUIAction_E action);
-static CustomElement_S tempCal_CustomElements = {EVENT_TempCalCustomElements, 0, 0, 0, 0, tempCal_CustomElementsHandler};
-static CustomElement_S tempCal_TempDisplay = {EVENT_TempCalTempDisplay, 0, 0, 0, 0, tempCal_TempDisplayHandler};
-static TextButton_S tempCal_PlusButton = {EVENT_TempCalPlusButton, 10, 90, 30, 20, " + "};
-static TextButton_S tempCal_MinusButton = {EVENT_TempCalMinusButton, 10, 120, 30, 20," - "};
-static TextButton_S tempCal_SetButton = {EVENT_TempCalSetButton, 70, 90,
+static const CustomElement_S tempCal_CustomElements = {EVENT_TempCalCustomElements, 0, 0, 0, 0, tempCal_CustomElementsHandler};
+static const CustomElement_S tempCal_TempDisplay = {EVENT_TempCalTempDisplay, 0, 0, 0, 0, tempCal_TempDisplayHandler};
+static const TextButton_S tempCal_PlusButton = {EVENT_TempCalPlusButton, 10, 90, 30, 20, " + "};
+static const TextButton_S tempCal_MinusButton = {EVENT_TempCalMinusButton, 10, 120, 30, 20," - "};
+static const TextButton_S tempCal_SetButton = {EVENT_TempCalSetButton, 70, 90,
                                          80, LARGE_BUTTON_Y_SIZE, "Calibrate"};
 static uint16_t set_temp_val = 0; // TODO: Rename
 

@@ -52,17 +52,17 @@ void publishGUIEvents(void);
 
 void clearAllGUIElements(void);
 
-void addGUIButtionElement(TextButton_S* textButton);
-void removeGUITextButton(TextButton_S* pTextButton);
+void addGUIButtionElement(const TextButton_S* textButton);
+void removeGUITextButton(const TextButton_S* pTextButton);
 
-void addGUICustomElement(CustomElement_S* pCustomElement);
-void removeGUICustomElement(CustomElement_S* pCustonElement);
+void addGUICustomElement(const CustomElement_S* pCustomElement);
+void removeGUICustomElement(const CustomElement_S* pCustonElement);
 
 void addGUIObserver(pfnElementtHandler pfnObserver);
 // TODO: Add in removeGUIObserver
 
-void requestGUIRedrawCustom(CustomElement_S* pCustomElement);
-void requestGUIRedrawTextButton(TextButton_S* pTextButton);
+void requestGUIRedrawCustom(const CustomElement_S* pCustomElement);
+void requestGUIRedrawTextButton(const TextButton_S* pTextButton);
 
 #endif /* GUIMANAGER_H_ */
 

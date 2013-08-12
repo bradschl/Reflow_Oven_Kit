@@ -19,13 +19,13 @@
 
 typedef struct
 {
-    TextButton_S* pTextButton;
+    const TextButton_S* pTextButton;
     bool fRedraw;
 } TextButton_Element_S;
 
 typedef struct
 {
-    CustomElement_S* pCustomElement;
+    const CustomElement_S* pCustomElement;
     bool fRedraw;
 } CustomElement_Element_S;
 
@@ -58,7 +58,7 @@ static bool isInRegion( touch_t xTouch, touch_t yTouch, pixel_t xStart,
                         pixel_t yStart, pixel_t xSize, pixel_t ySize);
 static void queueEvent(GUIEvent_E event, GUIAction_E action);
 static void redrawMarkedElements(void);
-static void drawTextButton(TextButton_S* pTextButton);
+static void drawTextButton(const TextButton_S* pTextButton);
 
 
 /**
@@ -180,10 +180,10 @@ void publishGUIEvents(void)
 }
 
 
-void addGUIButtionElement(TextButton_S* textButton)
+void addGUIButtionElement(const TextButton_S* textButton)
 {
     uint8_t i = 0;
-    TextButton_S* pTextButton;
+    const TextButton_S* pTextButton;
 
     while(i < GUI_MAX_TEXT_BUTTONS)
     {
@@ -202,7 +202,7 @@ void addGUIButtionElement(TextButton_S* textButton)
 }
 
 
-void removeGUITextButton(TextButton_S* pTextButton)
+void removeGUITextButton(const TextButton_S* pTextButton)
 {
     uint8_t i;
     pixel_t xEnd;
@@ -235,7 +235,7 @@ void removeGUITextButton(TextButton_S* pTextButton)
 }
 
 
-void removeGUICustomElement(CustomElement_S* pCustonElement)
+void removeGUICustomElement(const CustomElement_S* pCustonElement)
 {
     uint8_t i;
     pixel_t xEnd;
@@ -266,7 +266,7 @@ void removeGUICustomElement(CustomElement_S* pCustonElement)
 }
 
 
-void addGUICustomElement(CustomElement_S* pCustomElement)
+void addGUICustomElement(const CustomElement_S* pCustomElement)
 {
     uint8_t i;
 
@@ -285,7 +285,7 @@ void addGUICustomElement(CustomElement_S* pCustomElement)
     }
 }
 
-void requestGUIRedrawCustom(CustomElement_S* pCustomElement)
+void requestGUIRedrawCustom(const CustomElement_S* pCustomElement)
 {
     uint8_t i;
 
@@ -303,7 +303,7 @@ void requestGUIRedrawCustom(CustomElement_S* pCustomElement)
 }
 
 
-void requestGUIRedrawTextButton(TextButton_S* pTextButton)
+void requestGUIRedrawTextButton(const TextButton_S* pTextButton)
 {
     uint8_t i;
 
@@ -324,8 +324,8 @@ static void createTouchEvents(uint16_t xTouch, uint16_t yTouch)
 {
     uint8_t i;
     bool collision;
-    TextButton_S* pTextButton;
-    CustomElement_S* pCustomElement;
+    const TextButton_S* pTextButton;
+    const CustomElement_S* pCustomElement;
 
     // Iterate through all known display elements and check for collision
     for(i = 0; i < GUI_MAX_TEXT_BUTTONS; i++)
@@ -408,8 +408,8 @@ static void queueEvent(GUIEvent_E event, GUIAction_E action)
 static void redrawMarkedElements(void)
 {
     uint8_t i;
-    TextButton_S* pTextButton;
-    CustomElement_S* pCustomElement;
+    const TextButton_S* pTextButton;
+    const CustomElement_S* pCustomElement;
 
     if(fClearScreen)
     {
@@ -455,7 +455,7 @@ static void redrawMarkedElements(void)
 }
 
 
-static void drawTextButton(TextButton_S* pTextButton)
+static void drawTextButton(const TextButton_S* pTextButton)
 {
     uint16_t bg_color = COLOR_16_RED;
     pixel_t xEnd = (pTextButton->xStart) + (pTextButton->xSize);
