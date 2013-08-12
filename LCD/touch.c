@@ -76,8 +76,8 @@ void updateTouchValue(void)
     }
     else
     {
-        scTouchX = 0;
-        scTouchY = 0;
+        scTouchX = 255;
+        scTouchY = 255;
     }
 
 

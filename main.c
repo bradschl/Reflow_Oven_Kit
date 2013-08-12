@@ -22,15 +22,12 @@ int main(void)
 	BCSCTL1 = CALBC1_16MHZ; // 16MHz clock
 	DCOCTL = CALDCO_16MHZ;
 
-	P2DIR |= 1 << 7;
-
 	init_cal();
 	Setup_PWM_Timers();
 	setupRTC();
 
 	// GUI Elements
 	TOUCH_SETUP();
-	setupGUIManager();
 	setupReflowGUI();
 
 	// Oven Control

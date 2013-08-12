@@ -44,6 +44,8 @@
 /******************************************************************************
  * Functions
 ******************************************************************************/
+// See C file for function descriptions
+
 void setupGUIManager(void);
 void stepGUIManagerTask(void);
 void publishGUIEvents(void);
@@ -56,7 +58,11 @@ void removeGUITextButton(TextButton_S* pTextButton);
 void addGUICustomElement(CustomElement_S* pCustomElement);
 void removeGUICustomElement(CustomElement_S* pCustonElement);
 
+void addGUIObserver(pfnElementtHandler pfnObserver);
+// TODO: Add in removeGUIObserver
 
+void requestGUIRedrawCustom(CustomElement_S* pCustomElement);
+void requestGUIRedrawTextButton(TextButton_S* pTextButton);
 
 #endif /* GUIMANAGER_H_ */
 

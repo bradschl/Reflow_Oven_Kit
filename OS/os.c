@@ -61,6 +61,7 @@ void run_tasks(uint16_t tick_ms)
 	{
 	    stepReflowGUI();
 
+	    // TODO: Convert to an event driven item
 	    setBackgroundColor16(COLOR_16_BLACK);
 		setColor16(COLOR_16_WHITE);
 		get_system_time_string(text_buffer);
@@ -101,7 +102,6 @@ void runScheduler_noRet()
 		else
 		{
 		    // Background tasks
-		    P2OUT ^= 1 << 7;
 		    publishGUIEvents();
 		}
 	}
