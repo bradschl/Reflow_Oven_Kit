@@ -5,13 +5,16 @@
  *      Author: Nate
  */
 
+#include <stdint.h>
+#include <stdbool.h>
+
+// TODO: Remove this include
+#include <msp430g2553.h>
+
+#include "TempProfiles.h"
 #include "oven_control.h"
 #include "oven.h"
-#include "msp430g2553.h"
-#include "profile_lead.h"
-#include "../OS/time.h"
-#include "profile_pb_free.h"
-#include "stdbool.h"
+#include "OS/time.h"
 
 
 static bool leaded=true;
@@ -20,10 +23,8 @@ static uint16_t profile_count =0;
 
 
 const uint8_t total_counts = 64; // period
-OvenState_E oven_status = Oven_Idle;
-
-static uint16_t get_profile_temp(uint16_t index);
-
+static OvenState_E oven_status = Oven_Idle;
+static TemperatureProfile_S tempProfile;
 
 OvenState_E OvenCntl_getOvenState(void)
 {
@@ -45,8 +46,8 @@ uint8_t check_for_lead_profile()
 	 return (uint8_t)leaded;
 }
 
-void compensator(int setpoint_temp, int current_temp) {
-
+void compensator(int setpoint_temp, int current_temp)
+{
 	static uint8_t current_counts = 0;
 	static uint8_t time_on_counts = 10; //time on out of period, initial value set
 	uint8_t local_setpoint = setpoint_temp;
@@ -133,6 +134,17 @@ uint8_t start_oven()
 		reflow_timer.secs=0;
 		oven_status=Oven_Reflowing;
 		profile_count=0;
+
+		// TODO: Make this handle more than two profiles
+		if( leaded )
+		{
+		    tempProfile = TempProfile_getProfile( PB_REFLOW_PROFILE );
+		}
+		else
+		{
+		    tempProfile = TempProfile_getProfile( PB_FREE_REFLOW_PROFILE );
+		}
+
 		return 1;
 	}
 	else
@@ -149,17 +161,17 @@ void stop_oven()
 
 void stepOvenStateMachine()
 {
-	uint16_t oven_temp =0;
-	oven_temp= get_temp();
+	uint16_t oven_temp = get_temp();;
 
 	if((oven_temp>50) & (oven_status==Oven_Idle))
 	{
-		oven_status=Oven_Cooldown;
+		oven_status = Oven_Cooldown;
 	}
 
-	if(oven_temp>350)
+	if(oven_temp > 350)
 	{
-		oven_status=Oven_Error;
+		oven_status = Oven_Error;
+		OVEN_OFF;
 	}
 	else if((oven_status==Oven_Alarm) || (oven_status==Oven_Reflowing))
 	{
@@ -168,45 +180,25 @@ void stepOvenStateMachine()
 			profile_count++;
 		}
 
-        new_compensator( oven_temp, get_profile_temp(profile_count) );
+        new_compensator( oven_temp, tempProfile.points[ profile_count ] );
 
-        // TODO: Remove hardcoded alarm points
-        if(leaded)
+        if(profile_count >= tempProfile.alarmPoint )
         {
-            if((profile_count)==260)
-            {
-                oven_status=Oven_Alarm;
-            }
-        }
-        else
-        {
-            if((profile_count)==270)
-            {
-                oven_status=Oven_Alarm;
-            }
+            oven_status = Oven_Alarm;
         }
 
-        // TODO: Remove hardcoded alarm points
-		if(profile_count>358)
+		if(profile_count >= (tempProfile.profileLength - 2))
 		{
-			oven_status=Oven_Cooldown;
+			oven_status = Oven_Cooldown;
 			OVEN_OFF;
-			reflow_timer.secs=0;
+			reflow_timer.secs = 0;
 		}
 	}
 	else if((oven_status==Oven_Cooldown) && (oven_temp<50))
 	{
-		oven_status=Oven_Idle;
+		oven_status = Oven_Idle;
 	}
 
-}
-
-static uint16_t get_profile_temp(uint16_t index)
-{
-	if(leaded)
-		return profile[index];
-	else
-		return profileb[index];
 }
 
 void get_reflow_time_string(char * buffer)

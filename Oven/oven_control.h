@@ -8,7 +8,8 @@
 #ifndef OVEN_CONTROL_H_
 #define OVEN_CONTROL_H_
 
-#include "stdint.h"
+#include <stdint.h>
+#include <stdbool.h>
 
 void get_reflow_time_string(char * buffer);
 void stepOvenStateMachine();
@@ -25,11 +26,10 @@ uint8_t get_reflow_time_minutes();
 
 typedef enum
 {
-	Oven_Off,
+    Oven_Idle,
 	Oven_Reflowing,
 	Oven_Alarm,
 	Oven_Cooldown,
-	Oven_Idle,
 	Oven_Error
 } OvenState_E;
 

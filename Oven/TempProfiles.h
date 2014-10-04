@@ -35,11 +35,15 @@ typedef struct
     // Enumeration handle
     TempProfile_E profileName;
 
-    // Profile data points
-    const Temperature_T* profile;
+    // Profile data temperature points
+    const Temperature_T* points;
 
     // Length of profile
     Seconds_T profileLength;
+
+    // Time to issue the alarm at
+    Seconds_T alarmPoint;
+
 } TemperatureProfile_S;
 
 
