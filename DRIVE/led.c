@@ -32,6 +32,7 @@ void stepLEDStateMachined()
 	uint16_t yval =0;
 	TOUCH_VAL(&xval, &yval);
 
+	OvenState_E oven_status = OvenCntl_getOvenState();
 	if(oven_status==Oven_Idle)
 	{
 		if(!((xval + yval)==0)) // Timeout for touch

@@ -20,8 +20,15 @@ static uint16_t profile_count =0;
 
 
 const uint8_t total_counts = 64; // period
-enum oven_state oven_status = Oven_Idle;
+OvenState_E oven_status = Oven_Idle;
 
+static uint16_t get_profile_temp(uint16_t index);
+
+
+OvenState_E OvenCntl_getOvenState(void)
+{
+    return oven_status;
+}
 
 void set_profile_leaded()
 {
@@ -160,22 +167,26 @@ void stepOvenStateMachine()
 		{
 			profile_count++;
 		}
-			if(leaded)
-			{
-				new_compensator(oven_temp,profile[profile_count]);
-				if((profile_count)==260)
-				{
-					oven_status=Oven_Alarm;
-				}
-			}
-			else
-			{
-				new_compensator(oven_temp,profileb[profile_count]);
-				if((profile_count)==270)
-				{
-					oven_status=Oven_Alarm;
-				}
-			}
+
+        new_compensator( oven_temp, get_profile_temp(profile_count) );
+
+        // TODO: Remove hardcoded alarm points
+        if(leaded)
+        {
+            if((profile_count)==260)
+            {
+                oven_status=Oven_Alarm;
+            }
+        }
+        else
+        {
+            if((profile_count)==270)
+            {
+                oven_status=Oven_Alarm;
+            }
+        }
+
+        // TODO: Remove hardcoded alarm points
 		if(profile_count>358)
 		{
 			oven_status=Oven_Cooldown;
@@ -190,12 +201,12 @@ void stepOvenStateMachine()
 
 }
 
-uint16_t get_profile_temp()
+static uint16_t get_profile_temp(uint16_t index)
 {
 	if(leaded)
-		return profile[profile_count];
+		return profile[index];
 	else
-		return profileb[profile_count];
+		return profileb[index];
 }
 
 void get_reflow_time_string(char * buffer)

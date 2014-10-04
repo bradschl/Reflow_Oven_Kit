@@ -240,6 +240,8 @@ static void ReflowPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E ac
     bool fBackRequested = false;
     bool fStartStopRequested = false;
 
+    OvenState_E oven_status = OvenCntl_getOvenState();
+
     if(isFirstCall)
     {
         // Entering the page
@@ -506,6 +508,8 @@ static void reflow_OvenStatusHandler(GUIEvent_E event, GUIAction_E action)
             get_temp_str(oven_temp, text_buffer);
             setColor16(COLOR_16_CYAN);
             drawString(75, 25, text_buffer);
+
+            OvenState_E oven_status = OvenCntl_getOvenState();
             if((oven_status==Oven_Reflowing) || (oven_status==Oven_Alarm) || (oven_status==Oven_Cooldown))
             {
                 if(oven_temp_max<oven_temp)
@@ -525,6 +529,7 @@ static void reflow_OvenStatusHandler(GUIEvent_E event, GUIAction_E action)
 
 static void draw_status_message()
 {
+    OvenState_E oven_status = OvenCntl_getOvenState();
     switch(oven_status)
     {
         case Oven_Error:
