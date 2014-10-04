@@ -17,34 +17,18 @@
 #include "OS/time.h"
 
 
-static bool leaded=true;
 static time_stamp reflow_timer={0,6,0};
 static uint16_t profile_count =0;
 
-
 const uint8_t total_counts = 64; // period
 static OvenState_E oven_status = Oven_Idle;
-static TemperatureProfile_S tempProfile;
+static TemperatureProfile_S temperatureProfile;
 
 OvenState_E OvenCntl_getOvenState(void)
 {
     return oven_status;
 }
 
-void set_profile_leaded()
-{
-	leaded=true;
-}
-
-void set_profile_pb_free()
-{
-	leaded=false;
-}
-
-uint8_t check_for_lead_profile()
-{
-	 return (uint8_t)leaded;
-}
 
 void compensator(int setpoint_temp, int current_temp)
 {
@@ -126,25 +110,17 @@ void new_compensator(uint8_t current_temp, uint8_t set_point)
 
 }
 
-uint8_t start_oven()
+uint8_t start_oven(TemperatureProfile_S tempProfile)
 {
-	if(oven_status==Oven_Idle)
+	if((oven_status == Oven_Idle)
+	    && (tempProfile.profileLength > 0))
 	{
 		reflow_timer.minutes=6;
 		reflow_timer.secs=0;
 		oven_status=Oven_Reflowing;
 		profile_count=0;
 
-		// TODO: Make this handle more than two profiles
-		if( leaded )
-		{
-		    tempProfile = TempProfile_getProfile( PB_REFLOW_PROFILE );
-		}
-		else
-		{
-		    tempProfile = TempProfile_getProfile( PB_FREE_REFLOW_PROFILE );
-		}
-
+		temperatureProfile = tempProfile;
 		return 1;
 	}
 	else
@@ -180,14 +156,14 @@ void stepOvenStateMachine()
 			profile_count++;
 		}
 
-        new_compensator( oven_temp, tempProfile.points[ profile_count ] );
+        new_compensator( oven_temp, temperatureProfile.points[ profile_count ] );
 
-        if(profile_count >= tempProfile.alarmPoint )
+        if(profile_count >= temperatureProfile.alarmPoint )
         {
             oven_status = Oven_Alarm;
         }
 
-		if(profile_count >= (tempProfile.profileLength - 2))
+		if(profile_count >= (temperatureProfile.profileLength - 2))
 		{
 			oven_status = Oven_Cooldown;
 			OVEN_OFF;

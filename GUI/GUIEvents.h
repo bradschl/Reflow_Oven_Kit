@@ -15,8 +15,8 @@ typedef enum
     EVENT_MultiBackButton,
 
     EVENT_HomeCustomElements,
-    EVENT_HomeLeadedButton,
-    EVENT_HomeLeadFreeButton,
+    EVENT_HomeProfileButton,
+    EVENT_HomeNextProfileButton,
     EVENT_HomeTempCalButton,
 
     EVENT_TempCalPlusButton,

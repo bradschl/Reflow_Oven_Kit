@@ -6,7 +6,7 @@
  */
 
 
-#include "stdint.h"
+#include <stdint.h>
 #include "led.h"
 #include "timer.h"
 #include "../Oven/oven_control.h"
@@ -51,26 +51,14 @@ void stepLEDStateMachined()
 	}
 	if(oven_status==Oven_Alarm)
 	{
-		if(check_for_lead_profile())
-		{
-			if((get_reflow_time_minutes()*60 + get_reflow_time_seconds())>90)
-					{
-						BUZZER_ON();
-					}
-			else
-				BUZZER_OFF();
-		}
-		else
-		{
-			if((get_reflow_time_minutes()*60 + get_reflow_time_seconds())>80)
-								{
-									BUZZER_ON();
-								}
-			else
-				BUZZER_OFF();
-		}
-
-
+	    if(OvenCntl_getOvenState() == Oven_Alarm)
+	    {
+	        BUZZER_ON();
+	    }
+	    else
+	    {
+	        BUZZER_OFF();
+	    }
 	}
 
 }

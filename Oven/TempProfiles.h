@@ -23,17 +23,10 @@
 typedef uint8_t Temperature_T;
 typedef uint16_t Seconds_T;
 
-typedef enum
-{
-    PB_REFLOW_PROFILE,
-    PB_FREE_REFLOW_PROFILE,
-    NULL_PROFILE
-} TempProfile_E;
-
 typedef struct
 {
-    // Enumeration handle
-    TempProfile_E profileName;
+    // String name of the profile
+    const char* profileName;
 
     // Profile data temperature points
     const Temperature_T* points;
@@ -43,13 +36,12 @@ typedef struct
 
     // Time to issue the alarm at
     Seconds_T alarmPoint;
-
 } TemperatureProfile_S;
 
 
 /*************************************************************************************************
  * Functions
  *************************************************************************************************/
-TemperatureProfile_S TempProfile_getProfile(TempProfile_E profile);
+const TemperatureProfile_S* TempProfile_getProfiles(void);
 
 #endif /* TEMPCURVE_H_ */

@@ -12,6 +12,7 @@
 #include "Oven/oven.h"
 #include "Oven/calibration.h"
 #include "Oven/oven_control.h"
+#include "Oven/TempProfiles.h"
 
 /******************************************************************************
  * Defines
@@ -50,12 +51,15 @@ static const TextButton_S multi_BackButton = {EVENT_MultiBackButton, 70, 150, 42
 // Home Page
 static void home_CustomElementsHandler(GUIEvent_E event, GUIAction_E action);
 static const CustomElement_S home_CustomElements = {EVENT_HomeCustomElements, 0, 0, 0, 0, home_CustomElementsHandler};
-static const TextButton_S home_LeadedButton = {EVENT_HomeLeadedButton, 10, 60,
-                                         LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Leaded"};
-static const TextButton_S home_LeadFreeButton = {EVENT_HomeLeadFreeButton, 110, 60,
-                                           LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Pb-Free"};
+static       TextButton_S home_profileButton = {EVENT_HomeProfileButton, 10, 60,
+                                           LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, ""}; // Text gets set later
+static const TextButton_S home_nextProfileButton = {EVENT_HomeNextProfileButton, 110, 60,
+                                           LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Next -->"};
 static const TextButton_S home_TempCalButton = {EVENT_HomeTempCalButton, 140, 150,
                                            LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Temp Cal"};
+
+static const TemperatureProfile_S* tempProfiles;
+static size_t currentProfileIndex = 0;
 
 // Reflow Page
 static void reflow_CustomElementsHandler(GUIEvent_E event, GUIAction_E action);
@@ -103,6 +107,9 @@ void setupReflowGUI(void)
     // Setup the LCD driver
 	initILI9225B();
 
+	tempProfiles = TempProfile_getProfiles();
+	currentProfileIndex = 0;
+
 	// Start the GUI manager
     setupGUIManager();
 	addGUIObserver(reflowEventObserver);
@@ -146,24 +153,32 @@ static void homePageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E acti
     if(isFirstCall)
     {
         // First time this page has been called, set up GUI elements
+        home_profileButton.pText = tempProfiles[currentProfileIndex].profileName;
+
         addGUICustomElement(&multi_PageTitle);
         addGUICustomElement(&home_CustomElements);
-        addGUIButtionElement(&home_LeadedButton);
-        addGUIButtionElement(&home_LeadFreeButton);
+        addGUIButtionElement(&home_profileButton);
+        addGUIButtionElement(&home_nextProfileButton);
         addGUIButtionElement(&home_TempCalButton);
     }
 
     if(action == ACTION_Clicked)
     {
-        if(event == EVENT_HomeLeadedButton)
+        if(event == EVENT_HomeProfileButton)
         {
-            set_profile_leaded();
             currentPage = ReflowPageHandler;
         }
-        else if(event == EVENT_HomeLeadFreeButton)
+        else if(event == EVENT_HomeNextProfileButton)
         {
-            set_profile_pb_free();
-            currentPage = ReflowPageHandler;
+            currentProfileIndex++;
+
+            if(tempProfiles[currentProfileIndex].points == NULL)
+            {
+                currentProfileIndex = 0;
+            }
+
+            home_profileButton.pText = tempProfiles[currentProfileIndex].profileName;
+            requestGUIRedrawTextButton(&home_profileButton);
         }
         else if(event == EVENT_HomeTempCalButton)
         {
@@ -291,7 +306,7 @@ static void ReflowPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E ac
         }
         else if(fStartStopRequested)
         {
-            if(start_oven())
+            if(start_oven(tempProfiles[currentProfileIndex]))
             {
                 reflow_StartStopButton.pText = reflow_StopText;
                 requestGUIRedrawTextButton(&reflow_StartStopButton);
@@ -471,20 +486,9 @@ static void reflow_CustomElementsHandler(GUIEvent_E event, GUIAction_E action)
             drawString(120, 40, "Duration:");
 
             setColor16(COLOR_16_WHITE);
-            if(check_for_lead_profile())
-            {
-                setColor16(COLOR_16_GREEN);
-                drawString8_12(10,5, "Lead");
-                setColor16(COLOR_16_WHITE);
-                drawString8_12(42,5, " Profile Selected:");
-            }
-            else
-            {
-                setColor16(COLOR_16_RED);
-                drawString8_12(10,5, "Pb-Free");
-                setColor16(COLOR_16_WHITE);
-                drawString8_12(66,5, " Profile Selected:");
-            }
+
+            setColor16(COLOR_16_GREEN);
+            drawString8_12(10,5, tempProfiles[currentProfileIndex].profileName );
         }
     }
 }

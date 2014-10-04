@@ -11,27 +11,25 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void get_reflow_time_string(char * buffer);
-void stepOvenStateMachine();
-void stop_oven();
-uint8_t start_oven();
-
-void set_profile_leaded();
-void set_profile_pb_free();
-uint8_t check_for_lead_profile();
-
-
-uint8_t get_reflow_time_seconds();
-uint8_t get_reflow_time_minutes();
+#include "TempProfiles.h"
 
 typedef enum
 {
     Oven_Idle,
-	Oven_Reflowing,
-	Oven_Alarm,
-	Oven_Cooldown,
-	Oven_Error
+    Oven_Reflowing,
+    Oven_Alarm,
+    Oven_Cooldown,
+    Oven_Error
 } OvenState_E;
+
+uint8_t start_oven(TemperatureProfile_S tempProfile);
+void stop_oven();
+
+void stepOvenStateMachine();
+
+void get_reflow_time_string(char * buffer);
+uint8_t get_reflow_time_seconds();
+uint8_t get_reflow_time_minutes();
 
 OvenState_E OvenCntl_getOvenState(void);
 
