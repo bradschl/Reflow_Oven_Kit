@@ -8,7 +8,7 @@
 
 #include "profile_lead.h"
 
-const uint8_t profile[360] = {
+const uint8_t lead_profile[360] = {
 		30,
 		31,
 		33,

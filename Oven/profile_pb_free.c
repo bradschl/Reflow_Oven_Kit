@@ -7,7 +7,7 @@
 
 #include "profile_pb_free.h"
 
-const uint8_t profileb[360] = {
+const uint8_t lead_free_profile[360] = {
 	30,
 	31,
 	33,
