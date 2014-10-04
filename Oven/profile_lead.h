@@ -8,8 +8,10 @@
 #ifndef LEAD_PROFILE_H_
 #define LEAD_PROFILE_H_
 
-#include <stdint.h>
+#include "TempProfiles.h"
 
-extern const uint8_t lead_profile[360];
+#define LEAD_PROFILE_LENGTH         360
+
+extern const Temperature_T lead_profile[ LEAD_PROFILE_LENGTH ];
 
 #endif /* LEAD_PROFILE_H_ */

@@ -8,9 +8,9 @@
 #ifndef PB_FREE_PROFILE_H_
 #define PB_FREE_PROFILE_H_
 
-#include <stdint.h>
+#include "TempProfiles.h"
 
-extern const uint8_t lead_free_profile[360];
-
+#define LEAD_FREE_PROFILE_LENGTH        360
+extern const Temperature_T lead_free_profile[ LEAD_FREE_PROFILE_LENGTH ];
 
 #endif /* PB_FREE_PROFILE_H_ */

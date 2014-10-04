@@ -16,11 +16,11 @@
 
 static const TemperatureProfile_S profiles[] =
 {
-        {PB_REFLOW_PROFILE,         lead_profile,       360,    260},
-        {PB_FREE_REFLOW_PROFILE,    lead_free_profile,  360,    270},
+    {PB_REFLOW_PROFILE,         lead_profile,       LEAD_PROFILE_LENGTH,        260},
+    {PB_FREE_REFLOW_PROFILE,    lead_free_profile,  LEAD_FREE_PROFILE_LENGTH,   270},
 
-        // This must be the last entry in the table
-        {NULL_PROFILE,              NULL,               0,      0}
+    // This must be the last entry in the table
+    {NULL_PROFILE,              NULL,               0,                          0}
 };
 
 TemperatureProfile_S TempProfile_getProfile(TempProfile_E profile)

@@ -7,7 +7,7 @@
 
 #include "profile_pb_free.h"
 
-const uint8_t lead_free_profile[360] = {
+const Temperature_T lead_free_profile[ LEAD_FREE_PROFILE_LENGTH ] = {
 	30,
 	31,
 	33,

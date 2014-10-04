@@ -5,10 +5,9 @@
  *      Author: Nate
  */
 
-
 #include "profile_lead.h"
 
-const uint8_t lead_profile[360] = {
+const Temperature_T lead_profile[ LEAD_PROFILE_LENGTH ] = {
 		30,
 		31,
 		33,
