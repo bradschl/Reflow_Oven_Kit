@@ -6,7 +6,7 @@
  */
 
 
-#include "os.h"
+#include "OS/scheduler.h"
 #include "DRIVE/rtc.h"
 #include "DRIVE/timer.h"
 #include "LCD/colorLCD.h"

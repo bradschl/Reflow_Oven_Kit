@@ -7,7 +7,7 @@
 #include "LCD\touch.h"
 #include "DRIVE\GPIO.h"
 #include "DRIVE\rtc.h"
-#include "OS\os.h"
+#include "OS\scheduler.h"
 #include "Oven\oven.h"
 #include "DRIVE/timer.h"
 #include "DRIVE/led.h"
