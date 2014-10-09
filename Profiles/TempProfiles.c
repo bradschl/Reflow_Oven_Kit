@@ -11,8 +11,8 @@
 
 #include "TempProfiles.h"
 
-#include "Oven/profile_lead.h"
-#include "Oven/profile_pb_free.h"
+#include "profile_lead.h"
+#include "profile_pb_free.h"
 
 static const TemperatureProfile_S profiles[] =
 {

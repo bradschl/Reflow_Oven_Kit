@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "TempProfiles.h"
+#include "Profiles/TempProfiles.h"
 
 typedef enum
 {

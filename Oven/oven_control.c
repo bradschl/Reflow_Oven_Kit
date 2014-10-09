@@ -11,7 +11,7 @@
 // TODO: Remove this include
 #include <msp430g2553.h>
 
-#include "TempProfiles.h"
+#include "Profiles/TempProfiles.h"
 #include "oven_control.h"
 #include "oven.h"
 #include "OS/time.h"

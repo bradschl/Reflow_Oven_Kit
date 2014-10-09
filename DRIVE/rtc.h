@@ -12,8 +12,6 @@
 
 #include "Oven/oven_control.h"
 #include "Oven/oven.h"
-#include "Oven/profile_lead.h"
-#include "Oven/profile_pb_free.h"
 #include "OS/time.h"
 
 /******************************************************************************

@@ -12,7 +12,7 @@
 #include "Oven/oven.h"
 #include "Oven/calibration.h"
 #include "Oven/oven_control.h"
-#include "Oven/TempProfiles.h"
+#include "Profiles/TempProfiles.h"
 
 /******************************************************************************
  * Defines
