@@ -23,14 +23,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 /*************************************************************************************************
  * Include Files
  *************************************************************************************************/
 #include <stdint.h>
+#include <stdbool.h>
 #include <stddef.h>
-
-#include "ScalableProfile/SProfile.h"
-#include "TempProfiles.h"
+#include "SProfile.h"
 
 /*************************************************************************************************
  * Macros and Defines
@@ -39,43 +39,103 @@
 /*************************************************************************************************
  * Typedefs, structures, and enumerations
  *************************************************************************************************/
+// Type to use for fractional or large math operations. This can be an integer type, but never unsigned
+typedef float Fractional_T;
 
 /*************************************************************************************************
  * Variables
  *************************************************************************************************/
-static const SProfile_DataPoint leadProfile[] = {// Ramp time, target temp, next profile point
-                                                        {70,     140,    leadProfile + 1}, // Pre-heat
-                                                        {110,    160,    leadProfile + 2}, // Soak
-                                                        {50,     220,    leadProfile + 3}, // Ramp
-                                                        {30,     220,    leadProfile + 4}, // Reflow
-                                                        {1,      0,      NULL}             // Cool down
-                                                       };
-
-static const SProfile_DataPoint pbFreeProfile[] = {// Ramp time, target temp, next profile point
-                                                          {70,   140,    pbFreeProfile + 1}, // Pre-heat
-                                                          {110,  180,    pbFreeProfile + 2}, // Soak
-                                                          {80,   240,    pbFreeProfile + 3}, // Ramp
-                                                          {10,   240,    pbFreeProfile + 4}, // Reflow
-                                                          {1,    0,      NULL}               // Cool down
-                                                         };
-
-// Table of all profiles to hand to expose
-static const TemperatureProfile_S profiles[] =
-{
-    {"Lead",        leadProfile,        261},
-    {"PB Free",     pbFreeProfile,      271},
-
-    // This must be the last entry in the table
-    {NULL,          NULL,               0}
-};
 
 /*************************************************************************************************
  * Functions
  *************************************************************************************************/
 
-const TemperatureProfile_S* TempProfile_getProfiles(void)
+SProfile_Profile SProfile_createProfile(const SProfile_DataPoint* profileRoot, SRealTime_T profileDuration, STemperature_T startingTemp)
 {
-    return profiles;
+    SProfile_Profile profile;
+    profile.profileDuration         = 0;
+    profile.profileRoot             = profileRoot;
+    profile.profileVectorDuration   = 0;
+    profile.startingTemp = startingTemp;
+
+    if(profileRoot == NULL)
+    {
+        return profile;
+    }
+
+    // Find vector duration
+    const SProfile_DataPoint* vPoint = profileRoot;
+    for( ; vPoint != NULL; vPoint = (SProfile_DataPoint*)vPoint->nextProfilePoint)
+    {
+        profile.profileVectorDuration += vPoint->rampTime;
+    }
+
+    // If the vector profile is of length 0, then there is nothing we can scale to
+    if(profile.profileVectorDuration > 0)
+    {
+        profile.profileDuration = profileDuration;
+    }
+
+    return profile;
 }
+
+
+bool SProfile_getProfileDuration(const SProfile_Profile* profile)
+{
+    if(profile != NULL)
+    {
+        return profile->profileDuration;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+
+STemperature_T SProfile_getTemperatureAtTime(const SProfile_Profile* profile, SRealTime_T t)
+{
+    if(profile == NULL)
+    {
+        return 0;
+    }
+
+    STemperature_T Tstart = profile->startingTemp;
+    STemperature_T Tstop = profile->startingTemp;;
+
+    const SProfile_DataPoint* point = profile->profileRoot;
+    for( ; point != NULL; point = (SProfile_DataPoint*)point->nextProfilePoint)
+    {
+        Tstop = point->targetTemp;
+
+        if(t >= point->rampTime)
+        {
+            // Target time is not in this range, move on to the next vector
+            t -= point->rampTime;
+            Tstart = point->targetTemp;
+        }
+        else
+        {
+            // Target time is in this time range
+            if(point->rampTime > 0)
+            {
+                return (STemperature_T) Tstart + (((Fractional_T) Tstop) - Tstart) * (((Fractional_T) t) / point->rampTime);
+            }
+        }
+    }
+
+    // Past profile length, return last good temp
+    return Tstop;
+}
+
+
+
+
+
+
+
+
+
+
 
 

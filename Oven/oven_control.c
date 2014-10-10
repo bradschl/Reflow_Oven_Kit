@@ -7,22 +7,26 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 // TODO: Remove this include
 #include <msp430g2553.h>
 
 #include "Profiles/TempProfiles.h"
+#include "ScalableProfile/SProfile.h"
+
 #include "oven_control.h"
 #include "oven.h"
 #include "OS/time.h"
 
+static uint16_t secondsIntoProfile      = 0;
+static uint16_t secondsLeftInProfile    = 0;
 
 static time_stamp reflow_timer={0,6,0};
-static uint16_t profile_count =0;
 
 const uint8_t total_counts = 64; // period
 static OvenState_E oven_status = Oven_Idle;
-static TemperatureProfile_S temperatureProfile;
+static SProfile_Profile temperatureProfile;
 
 OvenState_E OvenCntl_getOvenState(void)
 {
@@ -110,17 +114,19 @@ void new_compensator(uint8_t current_temp, uint8_t set_point)
 
 }
 
+// TODO: Make this return a SUCCESS / FAILURE enum
 uint8_t start_oven(TemperatureProfile_S tempProfile)
 {
 	if((oven_status == Oven_Idle)
-	    && (tempProfile.profileLength > 0))
+	    && (tempProfile.profile != NULL))
 	{
 		reflow_timer.minutes=6;
 		reflow_timer.secs=0;
 		oven_status=Oven_Reflowing;
-		profile_count=0;
+		secondsIntoProfile=0;
 
-		temperatureProfile = tempProfile;
+		temperatureProfile = SProfile_createProfile( tempProfile.profile, tempProfile.standardProfileDuration, get_temp());
+		secondsLeftInProfile = SProfile_getProfileDuration(&temperatureProfile);
 		return 1;
 	}
 	else
@@ -144,7 +150,7 @@ void stepOvenStateMachine()
 		oven_status = Oven_Cooldown;
 	}
 
-	if(oven_temp > 350)
+	if(oven_temp > 300)
 	{
 		oven_status = Oven_Error;
 		OVEN_OFF;
@@ -153,17 +159,22 @@ void stepOvenStateMachine()
 	{
 		if(count_down_time(&reflow_timer))
 		{
-			profile_count++;
+			secondsIntoProfile++;
+
+			if(secondsLeftInProfile > 0)
+			{
+			    secondsLeftInProfile--;
+			}
 		}
 
-        new_compensator( oven_temp, temperatureProfile.points[ profile_count ] );
+		uint8_t targetTemp = SProfile_getTemperatureAtTime(&temperatureProfile, secondsIntoProfile);
+        new_compensator( oven_temp, targetTemp );
 
-        if(profile_count >= temperatureProfile.alarmPoint )
+        if(secondsLeftInProfile <= 2)
         {
             oven_status = Oven_Alarm;
         }
-
-		if(profile_count >= (temperatureProfile.profileLength - 2))
+        else if(secondsLeftInProfile <= 0)
 		{
 			oven_status = Oven_Cooldown;
 			OVEN_OFF;

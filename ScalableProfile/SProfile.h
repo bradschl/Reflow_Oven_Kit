@@ -23,14 +23,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef SPROFILE_H_
+#define SPROFILE_H_
+
 /*************************************************************************************************
  * Include Files
  *************************************************************************************************/
 #include <stdint.h>
-#include <stddef.h>
-
-#include "ScalableProfile/SProfile.h"
-#include "TempProfiles.h"
+#include <stdbool.h>
 
 /*************************************************************************************************
  * Macros and Defines
@@ -39,43 +39,78 @@
 /*************************************************************************************************
  * Typedefs, structures, and enumerations
  *************************************************************************************************/
+// Temperature storage type
+typedef uint8_t     STemperature_T;
+
+// Vectored time storage type
+typedef uint8_t     SRelativeTime_T;
+
+// Time storage type for time after devectoring
+typedef uint16_t    SRealTime_T;
+
+
+typedef struct
+{
+    // Arbitrary ramp time to reach the target temp
+    SRelativeTime_T rampTime;
+    // Temperature to reach at the end of the ramp time
+    STemperature_T  targetTemp;
+    // Pointer to the next VProfile_Point in the profile
+    const void*     nextProfilePoint;
+} SProfile_DataPoint;
+
+
+typedef struct
+{
+    // Pointer to the root of the profile
+    const SProfile_DataPoint* profileRoot;
+
+    // Duration of the profile (real time after scaling)
+    SRealTime_T profileDuration;
+
+    // Duration of the profile (vector time)
+    SRealTime_T profileVectorDuration;
+
+    // Temperature to start the profile at
+    STemperature_T startingTemp;
+} SProfile_Profile;
 
 /*************************************************************************************************
  * Variables
  *************************************************************************************************/
-static const SProfile_DataPoint leadProfile[] = {// Ramp time, target temp, next profile point
-                                                        {70,     140,    leadProfile + 1}, // Pre-heat
-                                                        {110,    160,    leadProfile + 2}, // Soak
-                                                        {50,     220,    leadProfile + 3}, // Ramp
-                                                        {30,     220,    leadProfile + 4}, // Reflow
-                                                        {1,      0,      NULL}             // Cool down
-                                                       };
-
-static const SProfile_DataPoint pbFreeProfile[] = {// Ramp time, target temp, next profile point
-                                                          {70,   140,    pbFreeProfile + 1}, // Pre-heat
-                                                          {110,  180,    pbFreeProfile + 2}, // Soak
-                                                          {80,   240,    pbFreeProfile + 3}, // Ramp
-                                                          {10,   240,    pbFreeProfile + 4}, // Reflow
-                                                          {1,    0,      NULL}               // Cool down
-                                                         };
-
-// Table of all profiles to hand to expose
-static const TemperatureProfile_S profiles[] =
-{
-    {"Lead",        leadProfile,        261},
-    {"PB Free",     pbFreeProfile,      271},
-
-    // This must be the last entry in the table
-    {NULL,          NULL,               0}
-};
 
 /*************************************************************************************************
  * Functions
  *************************************************************************************************/
+/**
+ * Creates scaled real time temperature profile out of a relative time profile
+ *
+ * @param profileRoot Pointer to the root node of the scalable profile points. Last profile must have nextProfilePoint=NULL
+ * @param profileDuration Duration to scale the vector profile to
+ * @param startingTemp Temperature to start the profile at (ambient starting)
+ * @return Control structure for using the vector profile
+ */
+SProfile_Profile SProfile_createProfile(const SProfile_DataPoint* profileRoot, SRealTime_T profileDuration, STemperature_T startingTemp);
 
-const TemperatureProfile_S* TempProfile_getProfiles(void)
-{
-    return profiles;
-}
+
+/**
+ * Gets the temperature for a given point in the profile
+ *
+ * @param profile Profile to get the temperature from
+ * @param t Time to find the temperature at
+ * @return Temperature for the given time into the profile. Returns the last temperature in the profile if
+ *         t is beyond the profile duration.
+ */
+STemperature_T SProfile_getTemperatureAtTime(const SProfile_Profile* profile, SRealTime_T t);
 
 
+/**
+ * Gets the duration of the profile (real time after scaling)
+ *
+ * @param profile Profile to get the information about
+ * @return Real time duration of the profile (not vector time)
+ */
+bool SProfile_getProfileDuration(const SProfile_Profile* profile);
+
+
+#endif /* SPROFILE_H_ */

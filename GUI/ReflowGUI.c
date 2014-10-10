@@ -153,7 +153,7 @@ static void homePageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E acti
     if(isFirstCall)
     {
         // First time this page has been called, set up GUI elements
-        home_profileButton.pText = tempProfiles[currentProfileIndex].profileName;
+        home_profileButton.pText = tempProfiles[currentProfileIndex].name;
 
         addGUICustomElement(&multi_PageTitle);
         addGUICustomElement(&home_CustomElements);
@@ -172,12 +172,12 @@ static void homePageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E acti
         {
             currentProfileIndex++;
 
-            if(tempProfiles[currentProfileIndex].points == NULL)
+            if(tempProfiles[currentProfileIndex].profile == NULL)
             {
                 currentProfileIndex = 0;
             }
 
-            home_profileButton.pText = tempProfiles[currentProfileIndex].profileName;
+            home_profileButton.pText = tempProfiles[currentProfileIndex].name;
             requestGUIRedrawTextButton(&home_profileButton);
         }
         else if(event == EVENT_HomeTempCalButton)
@@ -368,8 +368,6 @@ static void home_CustomElementsHandler(GUIEvent_E event, GUIAction_E action)
         {
             setBackgroundColor16(COLOR_16_BLACK);
             setColor16(COLOR_16_WHITE);
-            drawString(10, 90, "Peak: 210C");
-            drawString(110, 90, "Peak: 230C");
             drawString(10, 105, "Ensure Thermocouple Touches PCB");
             drawString(10, 150, "Time:");
             drawString(10, 120, "Hardware/Software:");
@@ -488,7 +486,7 @@ static void reflow_CustomElementsHandler(GUIEvent_E event, GUIAction_E action)
             setColor16(COLOR_16_WHITE);
 
             setColor16(COLOR_16_GREEN);
-            drawString8_12(10,5, tempProfiles[currentProfileIndex].profileName );
+            drawString8_12(10,5, tempProfiles[currentProfileIndex].name );
         }
     }
 }

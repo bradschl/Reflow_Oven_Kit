@@ -13,6 +13,8 @@
  *************************************************************************************************/
 #include <stdint.h>
 
+#include "ScalableProfile/SProfile.h"
+
 /*************************************************************************************************
  * Macros and Defines
  *************************************************************************************************/
@@ -26,16 +28,13 @@ typedef uint16_t Seconds_T;
 typedef struct
 {
     // String name of the profile
-    const char* profileName;
+    const char* name;
 
-    // Profile data temperature points
-    const Temperature_T* points;
+    // Scalable profile data points
+    const SProfile_DataPoint* profile;
 
-    // Length of profile
-    Seconds_T profileLength;
-
-    // Time to issue the alarm at
-    Seconds_T alarmPoint;
+    // Recommended duration of the profile
+    Seconds_T standardProfileDuration;
 } TemperatureProfile_S;
 
 

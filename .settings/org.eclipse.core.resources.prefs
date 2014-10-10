@@ -1,4 +1,4 @@
-#Wed Oct 08 22:48:37 CDT 2014
+#Thu Oct 09 21:33:58 CDT 2014
 eclipse.preferences.version=1
 encoding//Debug/DRIVE/subdir_rules.mk=UTF-8
 encoding//Debug/DRIVE/subdir_vars.mk=UTF-8
@@ -12,6 +12,10 @@ encoding//Debug/Oven/subdir_rules.mk=UTF-8
 encoding//Debug/Oven/subdir_vars.mk=UTF-8
 encoding//Debug/Profiles/subdir_rules.mk=UTF-8
 encoding//Debug/Profiles/subdir_vars.mk=UTF-8
+encoding//Debug/SProfile/subdir_rules.mk=UTF-8
+encoding//Debug/SProfile/subdir_vars.mk=UTF-8
+encoding//Debug/ScalableProfile/subdir_rules.mk=UTF-8
+encoding//Debug/ScalableProfile/subdir_vars.mk=UTF-8
 encoding//Debug/VProfile/subdir_rules.mk=UTF-8
 encoding//Debug/VProfile/subdir_vars.mk=UTF-8
 encoding//Debug/makefile=UTF-8
