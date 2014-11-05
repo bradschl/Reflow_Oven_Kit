@@ -53,8 +53,8 @@ static void home_CustomElementsHandler(GUIEvent_E event, GUIAction_E action);
 static const CustomElement_S home_CustomElements = {EVENT_HomeCustomElements, 0, 0, 0, 0, home_CustomElementsHandler};
 static       TextButton_S home_profileButton = {EVENT_HomeProfileButton, 10, 60,
                                            LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, ""}; // Text gets set later
-static const TextButton_S home_nextProfileButton = {EVENT_HomeNextProfileButton, 110, 60,
-                                           LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Next -->"};
+static const TextButton_S home_nextProfileButton = {EVENT_HomeNextProfileButton, 10, 100,
+                                           LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Change"};
 static const TextButton_S home_TempCalButton = {EVENT_HomeTempCalButton, 140, 150,
                                            LARGE_BUTTON_X_SIZE, LARGE_BUTTON_Y_SIZE, "Temp Cal"};
 
@@ -96,7 +96,7 @@ static pfnPageHandler lastCalledPage = NULL;
 ******************************************************************************/
 static void homePageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E action);
 static void tempCalPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E action);
-static void ReflowPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E action);
+static void reflowPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E action);
 
 static void draw_status_message(); // TODO: Refactor
 
@@ -166,7 +166,7 @@ static void homePageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E acti
     {
         if(event == EVENT_HomeProfileButton)
         {
-            currentPage = ReflowPageHandler;
+            currentPage = reflowPageHandler;
         }
         else if(event == EVENT_HomeNextProfileButton)
         {
@@ -249,7 +249,7 @@ static void tempCalPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E a
 }
 
 
-static void ReflowPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E action)
+static void reflowPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E action)
 {
     static ReflowPageState_E eState = REFLOW_Init;
     bool fBackRequested = false;
@@ -287,11 +287,15 @@ static void ReflowPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E ac
         addGUICustomElement(&reflow_GraphElement);
         addGUIButtionElement(&multi_BackButton);
         addGUICustomElement(&reflow_OvenStatus);
-         eState = REFLOW_GoIdle;
+        eState = REFLOW_GoIdle;
         break;
 
     case REFLOW_GoIdle:
-        if((oven_status==Oven_Idle))
+        if(fBackRequested)
+        {
+            currentPage = homePageHandler;
+        }
+        else if((oven_status==Oven_Idle))
         {
             reflow_StartStopButton.pText = reflow_StartText;
             addGUIButtionElement(&reflow_StartStopButton);
@@ -337,7 +341,7 @@ static void ReflowPageHandler(bool isFirstCall, GUIEvent_E event, GUIAction_E ac
 
     }
 
-    if(currentPage != ReflowPageHandler)
+    if(currentPage != reflowPageHandler)
     {
         // We are no longer the handler, remove our elements
         clearAllGUIElements();
@@ -368,10 +372,10 @@ static void home_CustomElementsHandler(GUIEvent_E event, GUIAction_E action)
         {
             setBackgroundColor16(COLOR_16_BLACK);
             setColor16(COLOR_16_WHITE);
-            drawString(10, 105, "Ensure Thermocouple Touches PCB");
-            drawString(10, 150, "Time:");
-            drawString(10, 120, "Hardware/Software:");
-            drawString(10, 130, "Nathan Zimmerman");
+            drawString8_12(10,45, "Profile");
+
+            drawString8_12(90,60, "Tap to select");
+            drawString8_12(90,100, "Tap to change");
         }
     }
 }
@@ -492,8 +496,6 @@ static void reflow_CustomElementsHandler(GUIEvent_E event, GUIAction_E action)
 }
 
 
-
-static void draw_status_message();
 static void reflow_OvenStatusHandler(GUIEvent_E event, GUIAction_E action)
 {
     char text_buffer[20];

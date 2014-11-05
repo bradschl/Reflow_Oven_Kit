@@ -60,22 +60,6 @@ void run_tasks(uint16_t tick_ms)
 	if((bit_modulous(tick_ms, TICK_BIT_512MS) == 4))
 	{
 	    stepReflowGUI();
-
-	    // TODO: Convert to an event driven item
-	    setBackgroundColor16(COLOR_16_BLACK);
-		setColor16(COLOR_16_WHITE);
-		get_system_time_string(text_buffer);
-		drawString(10,160,text_buffer);
-		//print_oven_data();
-
-		// TODO: Fix graph to be period agnostic
-		/*if(task_flags & graph_update)
-		{
-			update_graph();
-			task_flags &= ~graph_update;
-		}*/
-
-		//RLED_OUT ^= RLED;
 	}
 
 }
